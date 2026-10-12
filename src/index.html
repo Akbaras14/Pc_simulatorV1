@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><link rel="icon" href="favicon.ico?v=bengkelcoding-1" type="image/x-icon">
+  <title>Bengkel Coding — Rakit PC Simulator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:12px Arial,sans-serif}button{font:inherit;cursor:pointer}
+    .app{display:grid;grid-template-columns:minmax(0,1fr) 380px;min-height:100vh}.stage{position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(circle at 50% 46%,#4b504c,#262a28 58%,#141615)}
+    #scene{display:block;width:100%;height:100%;min-height:100vh}.top{position:absolute;z-index:2;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:32px 42px;color:#f3f4ee}.eyebrow,.label{font-size:10px;font-weight:bold;letter-spacing:.15em;color:#9aa198}.top h1{margin:12px 0 0;font-size:clamp(26px,3vw,46px);line-height:.95;letter-spacing:-.06em}.top a{color:#f3f4ee;text-decoration:none;border-bottom:1px solid #778078;padding-bottom:7px}.hint{position:absolute;z-index:2;bottom:26px;left:42px;color:#d9ddd5;font-size:11px}.hint i{display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 14px var(--lime)}
+
+    aside{display:flex;flex-direction:column;gap:28px;padding:30px 31px 22px;background:var(--paper)}.brand{display:flex;align-items:center;gap:9px;font-weight:bold;letter-spacing:.08em}.badge{margin-left:auto;padding:5px 7px;border:1px solid #c3c6bd;border-radius:3px;color:#777c73;font-size:8px;letter-spacing:.1em}.copy h2{margin:14px 0 0;font-size:39px;line-height:.91;letter-spacing:-.07em}.copy h2 em{color:#779d41;font-style:normal}.copy p{max-width:280px;margin:16px 0 0;color:#777b73;font-size:11px;line-height:1.55}.label{display:flex;gap:10px;padding-bottom:11px;border-bottom:1px solid var(--line)}.label span{color:#779d41}.label strong{margin-left:auto;color:var(--ink)}.option{display:flex;align-items:center;gap:11px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}.option input{display:none}.radio{width:13px;height:13px;border:1px solid #a4aa9e;border-radius:50%}.option.active .radio{border:4px solid var(--lime);background:var(--ink)}.option div{display:grid;gap:4px;flex:1}.option small,.current{color:#7e837a;font-size:10px}.arrow{color:#88907f;font-size:17px}.parts{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding-top:13px}.parts span{padding:8px;border:1px solid var(--line);color:#666c63;font-size:9px}.track{height:4px;margin-top:14px;background:var(--line)}.track i{display:block;height:100%;background:#779d41;transition:width .25s}.current{margin:9px 0 0}.actions{margin-top:auto}.primary,.secondary{display:flex;justify-content:space-between;width:100%;padding:16px 17px;border:0;background:var(--ink);color:#f0f1eb;font-weight:bold;text-align:left}.secondary{background:#779d41}.reset{display:block;margin:13px auto 0;border:0;background:transparent;color:#777c73;font-size:10px;text-decoration:underline}.foot{display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line);color:#9a9e95;font-size:9px}.help{border:0;background:transparent;color:#656b61;font-size:10px}.helpbox{position:absolute;right:31px;bottom:63px;width:230px;padding:15px;border:1px solid #c7cbc0;background:#f4f3ee;box-shadow:0 10px 30px #20221f22;font-size:11px}.helpbox p{margin:8px 0 0;color:#70766d;line-height:1.5}
+    #startMenu{position:absolute;z-index:6;padding:22px;background:#edf3fa;color:#203044;border:1px solid #b5c8dc;border-radius:9px;box-shadow:0 10px 28px #0005;font:14px "Segoe UI",Arial;display:flex;flex-direction:column;gap:18px}#startMenu button{color:#203044;border:0;background:transparent}#startMenu button:hover{background:#dae7f5}#startMenu button:focus-visible,#startSearch:focus-visible{outline:2px solid #185abd;outline-offset:2px}#startSearch{width:100%;padding:10px 12px;border:1px solid #cad5e2;border-bottom:2px solid #185abd;border-radius:4px;color:#203044;background:#fff;font:14px "Segoe UI",Arial}.start-apps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.start-apps button{padding:8px 4px;border-radius:4px;display:flex;align-items:center;gap:10px;flex-direction:column;font-size:12px}.start-icon{display:grid;place-items:center;width:42px;height:42px;color:white;font-size:27px;font-weight:600;border-radius:4px}.word-icon{background:#185abd}.note-icon{background:#b18721}.calc-icon{background:#508d91}.start-tip{margin-top:auto;font-weight:600;font-size:14px;line-height:1.8}.start-tip small{font-size:11px;font-weight:400;color:#67788e}.start-footer{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid #cad5e2;font-size:12px}.start-footer b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#185abd;color:#fff;margin-right:7px}.start-footer button{padding:8px 12px;border-radius:4px}#powerMenu{position:absolute;right:18px;bottom:66px;padding:6px;display:grid;background:#fff;border:1px solid #cad5e2;border-radius:5px;box-shadow:0 3px 12px #0002}#powerMenu button{padding:10px 16px;text-align:left}#startEmpty{font-size:12px;color:#67788e}
+    #calculatorApp{border-radius:7px;box-shadow:0 8px 24px #0006}
+    #wordApp,#calculatorApp{position:absolute;z-index:5;border:0;background:#e5e7eb}
+    #desktopText{display:block;width:100%;margin:8px 0;padding:10px;background:#091c36;color:#edf6ff;border:1px solid #174b86}#desktopControls button{padding:8px 12px}
+    #bootOrder{display:grid;gap:8px;margin:12px 0}#firstBoot{width:100%;padding:10px;background:#091c36;color:#edf6ff;border:1px solid #174b86}#biosStatus{line-height:1.5}#biosKeys button,#saveConfirm button{padding:10px 16px;margin-bottom:8px}
+    [hidden]{display:none!important}
+    :root{--ink:#f2f8ff;--lime:#20dfff;--paper:#07152b;--line:#174b86;--blue-deep:#051126}
+    body{background:var(--blue-deep);color:var(--ink)}
+    .stage{height:100vh;min-width:0;background:radial-gradient(ellipse at 54% 38%,#123a69 0%,#082447 38%,#041126 78%,#020814 100%)}
+    aside{position:relative;isolation:isolate;gap:25px;overflow:hidden;border-left:1px solid #1477cf;background:linear-gradient(155deg,#0d2544 0%,#07162d 46%,#040e20 100%);color:#eff7ff}
+    aside:before{position:absolute;z-index:-1;top:-190px;right:-190px;width:390px;height:390px;border:1px solid #147fff35;border-radius:50%;box-shadow:0 0 80px #087fff22,inset 0 0 80px #087fff12;content:""}
+    aside:after{position:absolute;z-index:-1;right:24px;bottom:78px;width:80px;height:1px;background:linear-gradient(90deg,transparent,#14dfff,transparent);box-shadow:0 0 18px #14dfff;content:""}
+    .brand{color:#f3f8ff;font-size:11px}.brand img{width:30px;height:30px;border:1px solid #19dfff;border-radius:8px;box-shadow:0 0 18px #087fff66}
+    .badge{border-color:#1675c4;color:#82dfff;background:#071b35}
+    .eyebrow,.label{color:#7eafd9}.label{border-color:#174b86}.label span{color:#16dfff}.label strong{color:#eaf6ff}
+    .copy h2{color:#f4f9ff}.copy h2 em{color:#11dfff;text-shadow:0 0 24px #0b8dff66}.copy p{color:#a5bdd8}
+    .option{border-color:#153b66;color:#edf6ff;transition:background .18s,border-color .18s,padding .18s}.option:hover,.option.active{padding-right:10px;padding-left:10px;border-color:#138dff;background:linear-gradient(90deg,#087fff22,#11dfff08)}.option.active .radio{border-color:#18dfff;background:#087fff;box-shadow:0 0 12px #0dbbff99}.option small,.current{color:#9cb6d3}.arrow{color:#19dfff}
+    .parts span{border-color:#174b86;background:#091c36;color:#b9d9f5}.track{background:#102d50}.track i{background:linear-gradient(90deg,#087fff,#18e4ff);box-shadow:0 0 12px #12bbff88}
+    .primary,.secondary{border:1px solid #168fff;background:linear-gradient(105deg,#0867e8,#0e9dff 65%,#13caff);box-shadow:0 5px 24px #087fff33;color:white;transition:filter .18s,transform .18s}.primary:hover,.secondary:hover{filter:brightness(1.16);transform:translateY(-1px)}.secondary{background:linear-gradient(105deg,#087fd2,#10cfe8)}
+    .reset,.help{color:#9cc8ee}.foot{border-color:#174b86;color:#7e9fbd}.helpbox{border-color:#1675c4;background:#0a1d38;color:#eef8ff;box-shadow:0 12px 35px #01081299}.helpbox p{color:#adc4df}
+    .top{color:#f5faff}.top h1{text-shadow:0 2px 22px #42a6ff66}.top a{border-color:#1bbcff;color:#c9eaff}.hint{color:#d9f3ff}.hint i{background:#50ff86;box-shadow:0 0 14px #50ff86}
+    .welcome{position:absolute;inset:105px 5% 8%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;pointer-events:none}
+    .welcome[hidden]{display:none}
+    .speech{position:relative;width:min(680px,92%);overflow:hidden;padding:15px 20px;border:1px solid #16cfff88;border-radius:16px;background:#03142bd9;color:#e9faff;box-shadow:0 0 28px #008dff35,inset 0 0 20px #078bff13}
+    .speech:after{position:absolute;left:calc(50% - 10px);bottom:-14px;width:20px;height:15px;background:#03142b;clip-path:polygon(0 0,100% 0,50% 100%);filter:drop-shadow(0 2px 0 #16cfff88);content:""}
+    .speech-label{display:block;margin-bottom:8px;color:#19dfff;font-size:9px;font-weight:bold;letter-spacing:.16em}
+    .marquee{overflow:hidden;white-space:nowrap;font-size:clamp(12px,1.5vw,16px);font-weight:600}
+    .marquee span{display:inline-block;padding-left:100%;animation:welcome-scroll 30s linear infinite}
+    @keyframes welcome-scroll{to{transform:translateX(-100%)}}
+    .welcome-gif{display:block;width:min(370px,55%);max-height:42vh;object-fit:contain;filter:drop-shadow(0 0 28px #078fff55)}
+    .assembly-guide{position:absolute;z-index:4;left:20px;bottom:16px;display:flex;align-items:flex-end;gap:16px;width:min(900px,calc(100% - 40px));pointer-events:none}
+    .assembly-guide[hidden]{display:none}
+    .guide-avatar{flex:0 0 auto;width:clamp(170px,24vw,280px);max-height:320px;object-fit:contain;filter:drop-shadow(0 0 26px #087fff85)}
+    .guide-bubble{position:relative;max-width:540px;padding:26px 29px;border:1px solid #16cfffaa;border-radius:22px;background:#03142bf7;color:#e9faff;box-shadow:0 0 36px #008dff55;line-height:1.55}
+    .guide-bubble:before{position:absolute;left:-13px;bottom:32px;width:22px;height:22px;transform:rotate(45deg);border-left:1px solid #16cfffaa;border-bottom:1px solid #16cfffaa;background:#03142b;content:""}
+    .guide-name{display:block;margin-bottom:11px;color:#19dfff;font-size:20px;font-weight:700}
+    .guide-description{display:block;color:#c5dff6;font-size:17px}
+    #scene{position:absolute;inset:0;min-height:0;touch-action:none}
+    .brand img{width:25px;height:25px;border-radius:50%;object-fit:cover}
+    @media(max-width:850px){.app{display:block}.stage{height:58vh;min-height:58vh}.top{padding:24px}.hint{left:24px}aside{min-height:42vh;padding:24px}.copy h2{font-size:32px}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="stage"><div class="top"><div><div class="eyebrow">ARSITECTURE DAN ORGANISASI KOMPUTER</div><h1>Rakit PC bersama Bengkel Coding</h1></div><a href="javascript:location.reload()">Reset ↗</a></div><canvas id="scene"></canvas><section id="startMenu" hidden aria-label="Menu Start"><input id="startSearch" type="search" placeholder="Cari aplikasi" aria-label="Cari aplikasi"><b>Disematkan</b><div class="start-apps"><button data-start-app="word"><span class="start-icon word-icon">W</span>Word</button><button data-start-app="note"><span class="start-icon note-icon">N</span>Note</button><button data-start-app="calculator"><span class="start-icon calc-icon">=</span>Kalkulator</button></div><p id="startEmpty" hidden>Tidak ada aplikasi yang cocok.</p><div class="start-tip">Bengkel Coding<br><small>Dokumen Word tersimpan otomatis di browser.</small></div><footer class="start-footer"><span><b>BC</b> Bengkel Coding</span><button id="startPower" aria-expanded="false" aria-controls="powerMenu">Daya</button></footer><div id="powerMenu" hidden><button data-power="restart">Mulai ulang</button><button data-power="shutdown">Matikan</button></div></section><iframe id="calculatorApp" src="calculator.html" title="Kalkulator" hidden></iframe><iframe id="wordApp" src="word.html" title="Word - editor dokumen" hidden></iframe><div class="welcome" id="welcome"><div class="speech"><span class="speech-label">BENGKEL CODING MENYAPA</span><div class="marquee"><span>Halo Teman Teman perkenalkan saya bengkel coding mari belajar arsitektur komputer dengan cara merakit komputer pc, silahkan pilih preset pada sidebar sebelah kanan.</span></div></div><img class="welcome-gif" src="assets/gif/bengkelcoding.gif" alt="Animasi Bengkel Coding"></div><div class="assembly-guide" id="assemblyGuide" hidden><img class="guide-avatar" src="assets/gif/bengkelcoding.gif" alt="Bengkel Coding"><div class="guide-bubble"><span class="guide-name" id="guideName"></span><span class="guide-description" id="guideDescription"></span></div></div><div class="hint" id="hint" hidden><i></i><span></span></div></section>
+    <aside>
+      <div class="brand"><img src="assets/images/bengkelcoding-logo.png" alt=""> BENGKEL CODING <small class="badge">Akbar Aditiya S</small></div>
+      <div class="copy"><div class="eyebrow">RAKIT PC SIMULATOR</div><h2>Rakit PC<br><em>versi kamu.</em></h2><p>Tugas Arsitecture dan Organisasi Komputer Dengan dosen Bapak Muhammad Santoso</p></div>
+      <div><label class="option active"><input type="radio" name="build" value="0" checked><i class="radio"></i><div><b>Mari Gasken</b><small>Simulasi hingga bisa digunakan</small></div><span class="arrow">↗</span></label></div>
+      <div id="components" hidden><div class="label"><span>02</span> KOMPONEN / <strong id="buildName"></strong></div><div class="parts" id="parts"></div></div>
+      <div id="progress" hidden><div class="label"><span>03</span> PROGRESS <strong><span id="count">0</span>/<span id="total">12</span></strong></div><div class="track"><i id="bar" style="width:0"></i></div><p class="current" id="current"></p></div>
+      <div id="biosPanel" hidden aria-label="Kontrol BIOS">
+        <p id="biosStatus" role="status" aria-live="polite"></p>
+        <div id="biosKeys" hidden><button type="button" data-bios-key="F2">F2</button> <button type="button" data-bios-key="Delete">DEL</button> <button type="button" data-bios-key="Escape">ESC</button></div>
+        <button class="primary" id="bootMenu" hidden>Boot / Boot Priority</button>
+        <div id="bootOrder" hidden><label for="firstBoot">First Boot</label><select id="firstBoot"><option value="ssd">SSD / Windows Boot Manager</option><option value="usb">Flashdisk (USB / Removable Device)</option></select></div>
+        <button class="primary" id="saveBios" hidden>F10 - Save and Exit</button>
+        <div id="saveConfirm" hidden><p>Save configuration and exit?</p><button type="button" id="saveYes">Yes</button> <button type="button" id="saveNo">No</button></div>
+      </div>
+      <div id="desktopControls" hidden>
+        <div class="label">DESKTOP / APLIKASI</div>
+        <p><button id="desktopStart" aria-expanded="false" aria-controls="startMenu">Start</button> <button type="button" data-app="word">Word</button> <button type="button" data-app="note">Note</button> <button type="button" data-app="calculator">Kalkulator</button></p>
+        <div id="textEditor" hidden><label id="editorLabel" for="desktopText">Dokumen</label><textarea id="desktopText" rows="6" placeholder="Ketik di sini..."></textarea></div>
+        <button type="button" id="closeApp" hidden>Tutup aplikasi</button>
+      </div>
+      <div class="actions"><button class="primary" id="start">Mulai simulasi <span>→</span></button><button class="primary" id="next" hidden>Lanjutkan step <span>→</span></button><button class="primary" id="install" hidden>Nyalakan PC <span>&rarr;</span></button><button class="secondary" id="inspect" hidden>Inspeksi model <span>◌</span></button><button class="reset" id="reset" hidden>Reset workspace</button></div>
+      <div class="foot"><button class="help" id="help">? &nbsp; Panduan singkat</button><span>Bengkel Coding @2026</span></div><div class="helpbox" id="helpbox" hidden><b>Cara bermain</b><p>Klik “Lanjutkan step” untuk memasukkan komponen satu per satu. Setelah PC selesai dirakit, letakkan monitor, mouse, dan keyboard di siluet hijau di atas meja. Setelah monitor, mouse, dan keyboard terpasang, colokkan flashdrive ke PC sebelum menyalakannya. Kamera kemudian mendekat ke monitor. Nyalakan PC, tekan F2/DEL/ESC saat boot, buka Boot, pilih USB sebagai First Boot, lalu F10 dan Yes. Setelah loading 100%, animasi Windows dan Bengkel Coding tampil sebelum desktop. Klik aplikasi di monitor atau sidebar untuk membukanya. Gunakan Inspeksi untuk melihat seluruh model 3D.</p><p>Model <a href="https://sketchfab.com/3d-models/meja-komputer-1837f10d9b064fd88a607a3d391a17af" style="color:inherit">Meja Komputer</a> oleh Sutikno, <a href="https://creativecommons.org/licenses/by/4.0/" style="color:inherit">CC BY 4.0</a>. <a href="https://sketchfab.com/3d-models/monitor-computer-realistic-computer-monitor-384ff6cf0bb947af9690529008f843a4" style="color:inherit">monitor</a> oleh Model Wala; <a href="https://sketchfab.com/3d-models/pc-wireless-mouse-df32a4319f304bc29330bf8c53c4adde" style="color:inherit">mouse</a> oleh Che Be; <a href="https://sketchfab.com/3d-models/black-office-keyboard-2549b323809745aba35c47165767942d" style="color:inherit">keyboard</a> oleh Rayzn (CC BY 4.0). <a href="https://sketchfab.com/3d-models/usb-flashdrive-0e6df3d1f2c44bf3a68b728bcf0157e8" style="color:inherit">USB FlashDrive</a> oleh Hardy Noer (CC BY 4.0).</p></div>
+    </aside>
+  </main>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"}}</script>
+  <script type="module">
+    import * as THREE from 'three';
+    import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+    import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+    const canvas=document.querySelector('#scene'), scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(42,1,.1,100); camera.position.set(6,4.8,8);
+    const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio,1.25)); renderer.shadowMap.enabled=false;
+    const controls=new OrbitControls(camera,canvas); controls.enableDamping=true; controls.target.set(0,1.4,0);
+    scene.add(new THREE.HemisphereLight(0xe5f2df,0x20241f,2.4)); const key=new THREE.DirectionalLight(0xffffff,4); key.position.set(5,8,6); key.castShadow=true; scene.add(key);
+    const assetManager=new THREE.LoadingManager();
+    // Version all dependencies too: old Git LFS pointers may still be cached.
+    assetManager.setURLModifier(resource=>{
+      if (/^(data:|blob:)/i.test(resource)) return resource;
+      const url=new URL(resource,document.baseURI);
+      url.searchParams.set('v','restored-lfs-2');
+      return url.href;
+    });
+    const presets=[{"name":"Mudah","case":{"path":"case/nzxt","position":[0,-1,0],"scale":1,"rotation":[4.71238898038469,0,4.71238898038469]},"parts":[{"key":"motherboard","path":"mobo/asus_prime_h510m","target":[-0.8,0.75,-0.3],"scale":0.6,"rotation":[0,0,0]},{"key":"caseFan","path":"case-fan/white","target":[-1.86,1.34,1],"scale":0.3,"rotation":[0,0,1.5707963267948966]},{"key":"cpu","path":"cpu/intel-i5","target":[-0.54,1.1,-0.3],"scale":0.0027,"rotation":[0,0,3.141592653589793]},{"key":"memory1","path":"ram/kingston_hyperx_fury","target":[0.09,1.12,0],"scale":0.45,"rotation":[0,0,0]},{"key":"memory2","path":"ram/kingston_hyperx_fury","target":[0.214,1.12,0],"scale":0.45,"rotation":[0,0,0]},{"key":"storage","path":"storage/ssd_samsung_980_pro_1tb","target":[-1.062,0.343,-0.25],"scale":0.25,"rotation":[0,0,0]},{"key":"cpuFan","path":"cpu-fan/noname","target":[0.2,1,1.35],"scale":0.2,"rotation":[0,0,0]},{"key":"psu","path":"psu/low-poly","target":[-1.59,-1.88,1.25],"scale":0.5,"rotation":[1.5707963267948966,0,4.71238898038469]}]}];
+    const peripherals=[
+      {key:'monitor',path:'monitor',desktop:true,position:[0,0,0],scale:1,width:.48,x:0,z:-.2},
+      {key:'mouse',path:'mouse',desktop:true,position:[0,0,0],scale:1,width:.065,x:.3,z:.23},
+      {key:'keyboard',path:'keyboard',desktop:true,position:[0,0,0],scale:1,width:.35,x:-.04,z:.23},
+      {key:'flashdrive',path:'flashdrive',usb:true,position:[0,0,0],scale:1,rotation:[0,0,0]}
+    ];
+    function parts(){return [...presets[selected].parts,...peripherals]}
+    const labels={motherboard:'Motherboard',caseFan:'Case Fan',cpu:'Processor (CPU)',memory1:'Memory (RAM)',memory2:'Memory (RAM) — stik kedua',storage:'Storage (SSD)',cpuFan:'CPU Cooler',psu:'Power Supply (PSU)',monitor:'Monitor',mouse:'Mouse',keyboard:'Keyboard',flashdrive:'Flashdrive (USB)'};
+    const purposes={flashdrive:'Colokkan flashdrive instalasi Windows ke port USB di atas PC, pada siluet hijau. Setelah terpasang, baru nyalakan PC.',monitor:'Letakkan monitor di bagian belakang tengah meja, pada siluet hijau.',mouse:'Letakkan mouse di sisi kanan meja, pada siluet hijau.',keyboard:'Letakkan keyboard di depan monitor, pada siluet hijau.',motherboard:'Papan utama yang menghubungkan prosesor, RAM, penyimpanan, dan kartu ekspansi.',caseFan:'Mengalirkan udara untuk membantu membuang panas dari dalam casing.',cpu:'Menjalankan instruksi dan perhitungan utama komputer.',memory1:'Menyimpan sementara data dan program yang sedang digunakan prosesor.',memory2:'Menambah kapasitas memori agar lebih banyak data aktif dapat diakses cepat.',storage:'Menyimpan sistem operasi, aplikasi, dan berkas secara permanen.',cpuFan:'Membuang panas dari prosesor agar suhunya tetap aman saat bekerja.',psu:'Mengubah listrik dari stopkontak menjadi daya yang dibutuhkan semua komponen.'};
+    const desktopDevices={},connections=[];
+    const layer=new THREE.Group(),pc=new THREE.Group();scene.add(layer);layer.add(pc);
+    const loader=new GLTFLoader(assetManager);
+    const selected=0;
+    let step=0,running=false,loading=false,activePart=null,ghost=null,dragging=false,inspecting=false,caseHeight=5,caseBounds=null,deskBounds=null,monitor=null,monitorView=false,windowsProgress=null,windowsTimer=null,windowsScreen=null,bootStage='off',firstBoot='ssd',bootSaved=false,bootTimer=null,flashInserted=false,startupAt=0,activeApp=null,startOpen=false,appText={word:'',note:''},calculatorResult='0';
+    const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const brandLogo=new Image();brandLogo.src='assets/images/bengkelcoding-logo.png';brandLogo.onload=()=>{if(windowsScreen&&bootStage==='desktop')drawWindowsScreen()};
+    const grabOffset=new THREE.Vector3();
+    const $=q=>document.querySelector(q), raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2(), dragPlane=new THREE.Plane(new THREE.Vector3(0,0,1),0), dragPoint=new THREE.Vector3();
+    let renderReady=false;
+    const gl=renderer.getContext();
+    const viewportLimit=gl.getParameter(gl.MAX_VIEWPORT_DIMS);
+    const renderLimit=Math.min(2048,gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),gl.getParameter(gl.MAX_TEXTURE_SIZE),...viewportLimit);
+    function resize(){
+      const {width,height}=canvas.parentElement.getBoundingClientRect();
+      renderReady=Number.isFinite(width)&&Number.isFinite(height)&&width>=1&&height>=1;
+      if(!renderReady)return;
+      const ratio=Math.min(window.devicePixelRatio||1,1.25,renderLimit/Math.max(width,height));
+      const w=Math.max(1,Math.floor(width*ratio)),h=Math.max(1,Math.floor(height*ratio));
+      if(canvas.width!==w||canvas.height!==h){renderer.setPixelRatio(1);renderer.setSize(w,h,false)}
+      camera.aspect=width/height;camera.updateProjectionMatrix();
+      renderReady=gl.drawingBufferWidth>0&&gl.drawingBufferHeight>0;
+      if(monitorView)focusMonitor();
+    }
+    new ResizeObserver(resize).observe(canvas.parentElement);
+    addEventListener('resize',resize);resize();
+    function hint(text){$('#hint span').textContent=text}
+    let guideTimer;
+    function guideMessage(title,description){
+      clearTimeout(guideTimer);
+      $('#assemblyGuide').hidden=false;
+      $('#guideName').textContent=title;
+      $('#guideDescription').textContent=description;
+    }
+    function guide(spec){
+      $('#assemblyGuide').hidden=!spec;
+      if(!spec)return;
+      $('#guideName').textContent=labels[spec.key];
+      $('#guideDescription').textContent=purposes[spec.key];
+    }
+    function setBuild(){
+      $('#buildName').textContent=presets[selected].name;
+      $('#parts').replaceChildren(...parts().map(item=>{const el=document.createElement('span');el.textContent=labels[item.key];return el}));
+    }
+    function update(){
+      const items=parts(),complete=step===items.length;
+      $('#count').textContent=step;$('#total').textContent=items.length;
+      $('#bar').style.width=(step/items.length*100)+'%';
+      $('#current').textContent=complete?(bootStage==='desktop'?'Desktop siap':'Setup PC selesai'):labels[items[step].key];
+      $('#next').hidden=!running||loading||!!activePart||complete;
+      $('#inspect').hidden=!running||!complete;
+      $('#install').hidden=!running||!complete||!flashInserted||!['off','noos','shutdown'].includes(bootStage);
+      $('#biosPanel').hidden=!running||!complete||['windows','windows-logo','bengkel-logo','desktop'].includes(bootStage);
+      $('#desktopControls').hidden=bootStage!=='desktop';
+      $('#biosKeys').hidden=bootStage!=='post';$('#bootMenu').hidden=bootStage!=='bios';
+      $('#bootOrder').hidden=bootStage!=='boot';$('#saveBios').hidden=!['bios','boot'].includes(bootStage);
+      $('#saveConfirm').hidden=bootStage!=='confirm';
+      $('#biosStatus').textContent={shutdown:'Klik Nyalakan PC untuk memulai kembali.',off:'Nyalakan PC untuk masuk BIOS.',post:'Tekan F2, DEL, atau ESC berulang saat PC menyala.',bios:'Masuk ke menu Boot / Boot Priority.',boot:'Ubah First Boot menjadi Flashdisk (USB), lalu tekan F10.',confirm:'Pilih Yes untuk menyimpan dan keluar.',noos:'SSD belum memiliki sistem operasi. Nyalakan ulang dan pilih USB di BIOS.'}[bootStage]||'';
+    }
+    async function loadModel(spec){
+      loading=true;update();
+      try{
+        const gltf=await loader.loadAsync(new URL('assets/models/'+spec.path+'/scene.gltf',document.baseURI).href);
+        const root=gltf.scene.children[0];
+        if(!root)throw new Error('Model kosong');
+        // Preserve the original asset-specific assembly calibration; no equal-size normalization.
+        root.matrixAutoUpdate=true;root.position.set(...(spec.target||spec.position));if(spec.rotation)root.rotation.set(...spec.rotation);root.scale.setScalar(spec.scale);
+        root.updateMatrixWorld(true);layer.add(root);return root;
+      }catch(error){console.error('Gagal memuat '+spec.path,error);hint('Model gagal dimuat. Coba kembali.');throw error}
+      finally{loading=false;update()}
+    }
+    function removeGhost(){
+      if(!ghost)return;scene.remove(ghost);
+      const materials=new Set();ghost.traverse(obj=>{if(obj.isMesh)materials.add(obj.material)});
+      materials.forEach(material=>material.dispose());ghost=null;
+    }
+    function placeDesk(desk){
+      const size=new THREE.Box3().setFromObject(desk).getSize(new THREE.Vector3());
+      const caseSize=caseBounds.getSize(new THREE.Vector3()),center=caseBounds.getCenter(new THREE.Vector3());
+      desk.scale.multiplyScalar(Math.max((caseSize.x+caseHeight*1.2)/size.x,caseSize.z*1.4/size.z));
+      desk.updateMatrixWorld(true);
+      const bounds=new THREE.Box3().setFromObject(desk),deskCenter=bounds.getCenter(new THREE.Vector3());
+      desk.position.set(center.x-caseHeight*.3-deskCenter.x,caseBounds.min.y-bounds.max.y,center.z-deskCenter.z);
+      desk.updateMatrixWorld(true);
+    }
+    function placePeripheral(root,spec){
+      const deskSize=deskBounds.getSize(new THREE.Vector3()),deskCenter=deskBounds.getCenter(new THREE.Vector3());
+      const size=new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+      root.scale.multiplyScalar(deskSize.x*spec.width/size.x);root.updateMatrixWorld(true);
+      const bounds=new THREE.Box3().setFromObject(root),center=bounds.getCenter(new THREE.Vector3());
+      root.position.set(deskCenter.x+deskSize.x*spec.x-center.x,deskBounds.max.y-bounds.min.y,deskCenter.z+deskSize.z*spec.z-center.z);
+      root.updateMatrixWorld(true);
+    }
+    function placeFlashdrive(root){
+      const size=new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3());
+      root.scale.multiplyScalar(caseHeight*.14/Math.max(size.x,size.y,size.z));root.updateMatrixWorld(true);
+      const bounds=new THREE.Box3().setFromObject(root),center=bounds.getCenter(new THREE.Vector3()),caseSize=caseBounds.getSize(new THREE.Vector3()),caseCenter=caseBounds.getCenter(new THREE.Vector3());
+      root.position.set(caseCenter.x+caseSize.x*.2-center.x,caseBounds.max.y-caseHeight*.025-bounds.min.y,caseBounds.max.z-caseHeight*.12-center.z);
+      root.updateMatrixWorld(true);
+    }
+    function movePCBesideDesk(){
+      pc.position.set(deskBounds.max.x+caseHeight*.15-caseBounds.min.x,deskBounds.min.y-caseBounds.min.y,0);
+      pc.updateMatrixWorld(true);caseBounds=new THREE.Box3().setFromObject(pc);
+      frameAssembly();
+    }
+    function frameAssembly(){
+      if(step>=presets[selected].parts.length){
+        const bounds=new THREE.Box3().setFromObject(layer),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+        const distance=Math.max(size.y,size.x/camera.aspect)/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*1.25;
+        controls.target.copy(center);camera.position.set(center.x,center.y+size.y*.7,bounds.max.z+distance);camera.lookAt(center);controls.update();return;
+      }
+      const center=caseBounds.getCenter(new THREE.Vector3()),width=caseBounds.getSize(new THREE.Vector3()).x;
+      const distance=Math.max(caseHeight,(width+caseHeight*.9)/camera.aspect)/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*1.3;
+      controls.target.set(center.x-caseHeight*.3,center.y,center.z);
+      camera.position.set(controls.target.x,center.y+caseHeight*.45,caseBounds.max.z+distance);camera.lookAt(controls.target);controls.update();
+    }
+    function showConnections(){
+      if(connections.length||!['monitor','mouse','keyboard'].every(key=>desktopDevices[key]))return;
+      const pulseMaterial=new THREE.MeshBasicMaterial({color:0xe6ffff}),radius=caseHeight*.009;
+      const surface=document.createElement('canvas');surface.width=128;surface.height=8;
+      const ctx=surface.getContext('2d'),gradient=ctx.createLinearGradient(0,0,128,0);
+      gradient.addColorStop(0,'#426278');gradient.addColorStop(.55,'#426278');gradient.addColorStop(.78,'#ffffff');gradient.addColorStop(1,'#426278');ctx.fillStyle=gradient;ctx.fillRect(0,0,128,8);
+      const flowTexture=new THREE.CanvasTexture(surface);flowTexture.wrapS=THREE.RepeatWrapping;flowTexture.repeat.set(4,1);flowTexture.colorSpace=THREE.SRGBColorSpace;
+      ['monitor','mouse','keyboard'].forEach((key,index)=>{
+        const material=new THREE.MeshBasicMaterial({color:[0x23beff,0x59e8ff,0xacefff][index],map:flowTexture});
+        const device=key==='monitor'?desktopDevices[key].getObjectByName('Cube001_Material005_0')||desktopDevices[key]:desktopDevices[key];
+        const bounds=new THREE.Box3().setFromObject(device),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+        const start=new THREE.Vector3(caseBounds.min.x+caseHeight*(.12+index*.035),caseBounds.max.y-caseHeight*(.15+index*.06),caseBounds.min.z);
+        const end=new THREE.Vector3(center.x,bounds.min.y+size.y*(key==='monitor'?.15:.5),bounds.min.z);
+        const tableY=deskBounds.max.y+radius*2+index*caseHeight*.035,backZ=Math.min(deskBounds.min.z,caseBounds.min.z)-caseHeight*(.1+index*.07);
+        const curve=new THREE.CatmullRomCurve3([start,new THREE.Vector3(start.x,tableY,backZ),new THREE.Vector3(end.x+caseHeight*.1,tableY,backZ),new THREE.Vector3(end.x,tableY,end.z-caseHeight*.12),end]);
+        const cable=new THREE.Mesh(new THREE.TubeGeometry(curve,64,radius,8,false),material);
+        const pulse=new THREE.Mesh(new THREE.SphereGeometry(radius*1.9,8,6),pulseMaterial);pulse.position.copy(curve.getPointAt(0));
+        cable.name='cable-'+key;pulse.name='cable-flow-'+key;layer.add(cable,pulse);connections.push({curve,pulse,flowTexture});
+      });
+      frameAssembly();
+    }
+    function createWindowsScreen(root){
+      const display=root.getObjectByName('Cube001_Material004_0');
+      if(!display)throw new Error('Layar monitor tidak ditemukan');
+      const geometry=display.geometry;geometry.computeBoundingBox();
+      const {min,max}=geometry.boundingBox,positions=geometry.attributes.position,uv=new Float32Array(positions.count*2);
+      // This monitor exports its screen in the local X/Z plane.
+      for(let i=0;i<positions.count;i++){uv[i*2]=(positions.getX(i)-min.x)/(max.x-min.x);uv[i*2+1]=(positions.getZ(i)-min.z)/(max.z-min.z)}
+      geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));
+      const surface=document.createElement('canvas');surface.width=1024;surface.height=576;
+      const texture=new THREE.CanvasTexture(surface);texture.colorSpace=THREE.SRGBColorSpace;
+      display.material=new THREE.MeshBasicMaterial({map:texture,toneMapped:false,side:THREE.DoubleSide});
+      windowsScreen=display;drawWindowsScreen();
+    }
+    function drawDesktop(ctx){
+      ctx.fillStyle='#041126';ctx.fillRect(0,0,1024,576);
+      if(brandLogo.complete&&brandLogo.naturalWidth){ctx.globalAlpha=.75;ctx.drawImage(brandLogo,260,30,720,405);ctx.globalAlpha=1}
+      ctx.textAlign='center';ctx.fillStyle='#d9f6ff';ctx.font='bold 26px Segoe UI, Arial';ctx.fillText('BENGKEL CODING',630,474);ctx.font='15px Segoe UI, Arial';ctx.fillStyle='#91afcb';ctx.fillText('Belajar komputer, dari rakitan hingga desktop.',630,501);
+      const apps=[['W','#246cda','Word'],['N','#dfb548','Note'],['=','#508d91','Kalkulator']];
+      apps.forEach(([icon,color,label],index)=>{
+        ctx.fillStyle=color;ctx.fillRect(32,34+index*128,64,64);ctx.fillStyle='#fff';ctx.font='bold 36px Segoe UI, Arial';ctx.fillText(icon,64,80+index*128);
+        ctx.font='18px Segoe UI, Arial';ctx.fillText(label,64,124+index*128);
+      });
+      ctx.fillStyle='#102741';ctx.fillRect(0,528,1024,48);ctx.textAlign='left';ctx.fillStyle='#dff5ff';ctx.font='18px Arial';ctx.fillText('Start',24,558);ctx.fillText('Word     Note     Kalkulator',130,558);ctx.textAlign='right';ctx.fillText('Bengkel Coding',998,558);ctx.textAlign='left';
+      if(activeApp&&activeApp!=='calculator'){
+        ctx.fillStyle='#f4f6fa';ctx.fillRect(180,60,764,430);ctx.fillStyle='#153961';ctx.fillRect(180,60,764,46);
+        ctx.fillStyle='#fff';ctx.font='22px Arial';ctx.fillText({word:'Word - Dokumen',note:'Note - Catatan',}[activeApp],200,90);ctx.fillText('X',910,90);
+        if(activeApp==='word'){ctx.fillStyle='#e2eaf3';ctx.fillRect(180,106,764,35);ctx.fillStyle='#38506a';ctx.font='16px Segoe UI, Arial';ctx.fillText('File      Beranda      Sisipkan      Tata Letak',208,130)}
+        ctx.fillStyle='#172737';ctx.font='22px Arial';
+        const text=appText[activeApp]||'Ketik dokumen melalui editor pada sidebar.';
+        text.split('\n').flatMap(line=>line.match(/.{1,52}/gu)||['']).slice(0,12).forEach((line,index)=>ctx.fillText(line,208,(activeApp==='word'?172:148)+index*26));
+      }
+    }
+    function advanceStartup(now){
+      if(!['windows-logo','bengkel-logo'].includes(bootStage))return;
+      if(now-startupAt>=(reducedMotion?600:2400)){
+        bootStage=bootStage==='windows-logo'?'bengkel-logo':'desktop';startupAt=now;update();
+        if(bootStage==='desktop'){$('#current').textContent='Desktop siap';hint('Klik Word, Note, atau Kalkulator pada monitor atau sidebar.');}
+      }
+      drawWindowsScreen(now);
+    }
+    function closeStart(){
+      startOpen=false;$('#startMenu').hidden=true;$('#powerMenu').hidden=true;$('#desktopStart').setAttribute('aria-expanded','false');$('#startPower').setAttribute('aria-expanded','false');
+    }
+    function toggleStart(){
+      if(bootStage!=='desktop')return;
+      if(startOpen){closeStart();return}
+      focusMonitor();startOpen=true;$('#desktopStart').setAttribute('aria-expanded','true');$('#startSearch').value='';filterStartApps('');positionApp();$('#startSearch').focus();
+    }
+    function filterStartApps(query){
+      let count=0;for(const button of document.querySelectorAll('[data-start-app]')){button.hidden=!button.textContent.toLowerCase().includes(query.trim().toLowerCase());if(!button.hidden)count++;}
+      $('#startEmpty').hidden=count>0;
+    }
+    function desktopPower(action){
+      if(bootStage!=='desktop'||!['restart','shutdown'].includes(action))return;
+      openDesktopApp(null);closeStart();clearTimeout(bootTimer);clearInterval(windowsTimer);
+      if(action==='restart'){bootStage='windows-logo';windowsProgress=100;startupAt=performance.now();hint('Memulai ulang Windows...');}
+      else{bootStage='shutdown';windowsProgress=null;hint('PC dimatikan. Klik Nyalakan PC untuk memulai kembali.');}
+      focusMonitor();update();drawWindowsScreen();
+    }
+    function openDesktopApp(app){
+      if(bootStage!=='desktop'||!['word','note','calculator',null].includes(app))return;
+      if(startOpen)closeStart();
+      activeApp=app;$('#wordApp').hidden=app!=='word';$('#calculatorApp').hidden=app!=='calculator';if(app==='word'||app==='calculator'){focusMonitor();positionApp()}$('#textEditor').hidden=app!=='note';$('#closeApp').hidden=!app;
+      if(app==='note'){$('#desktopText').value=appText[app];$('#editorLabel').textContent=app==='word'?'Dokumen Word':'Catatan Note';}
+      drawWindowsScreen();
+    }
+    function positionApp(){
+      $('#wordApp').hidden=activeApp!=='word'||!monitorView;$('#calculatorApp').hidden=activeApp!=='calculator'||!monitorView;
+      $('#startMenu').hidden=!startOpen||!monitorView;
+      if(!monitorView||(!startOpen&&!['word','calculator'].includes(activeApp)))return;
+      const bounds=new THREE.Box3().setFromObject(windowsScreen),rect=canvas.getBoundingClientRect();
+      const topLeft=new THREE.Vector3(bounds.min.x,bounds.max.y,bounds.max.z).project(camera),bottomRight=new THREE.Vector3(bounds.max.x,bounds.min.y,bounds.max.z).project(camera);
+      const left=(topLeft.x+1)*rect.width/2,top=(1-topLeft.y)*rect.height/2,width=(bottomRight.x-topLeft.x)*rect.width/2,height=(topLeft.y-bottomRight.y)*rect.height/2;
+      if(startOpen){
+        const menu=$('#startMenu'),scale=Math.min(1,width*.72/380,height*.88/390);
+        menu.style.width='380px';menu.style.height='390px';menu.style.transformOrigin='top left';menu.style.transform='scale('+scale+')';
+        menu.style.left=left+width*.025+'px';menu.style.top=top+height*528/576-390*scale-6+'px';
+      }
+      if(!['word','calculator'].includes(activeApp))return;
+      const frame=$(activeApp==='word'?'#wordApp':'#calculatorApp');
+      if(activeApp==='calculator'){
+        const scale=Math.min(1,width*.55/280,height*.82/340);
+        frame.style.width='280px';frame.style.height='340px';frame.style.transformOrigin='top left';frame.style.transform='scale('+scale+')';
+        frame.style.left=left+(width-280*scale)/2+'px';frame.style.top=top+(height-340*scale)/2+'px';
+      }else{
+        frame.style.transform='none';frame.style.left=left+'px';frame.style.top=top+'px';frame.style.width=width+'px';frame.style.height=height*528/576+'px';
+      }
+    }
+    function drawWindowsScreen(now=performance.now()){
+      const surface=windowsScreen.material.map.image,ctx=surface.getContext('2d');
+      ctx.fillStyle='#061b40';ctx.fillRect(0,0,surface.width,surface.height);
+      if(bootStage==='desktop'){drawDesktop(ctx);windowsScreen.material.map.needsUpdate=true;return}
+      if(bootStage==='bengkel-logo'){
+        ctx.globalAlpha=reducedMotion?1:Math.min(1,(now-startupAt)/220);
+        if(brandLogo.complete&&brandLogo.naturalWidth)ctx.drawImage(brandLogo,192,35,640,360);
+        ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='bold 34px Arial';ctx.fillText('BENGKEL CODING',512,455);ctx.globalAlpha=1;
+        windowsScreen.material.map.needsUpdate=true;return;
+      }
+      if(windowsProgress===null){
+        ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='32px monospace';
+        const titles={off:'PC belum dinyalakan',shutdown:'PC dimatikan',post:'BENGKEL CODING - POST',bios:'BIOS Setup Utility',boot:'Boot Priority / Boot Order',confirm:'Save and Exit',noos:'No bootable operating system'};
+        ctx.fillText(titles[bootStage],64,96);ctx.font='23px monospace';
+        const rows={shutdown:['Klik Nyalakan PC untuk memulai Windows.'],off:['Klik Nyalakan PC pada sidebar.'],post:['Starting computer...','Press F2 / DEL / ESC to enter BIOS'],bios:['Main   Advanced   [Boot]   Save & Exit','Pilih menu Boot / Boot Priority'],boot:['First Boot: '+(firstBoot==='usb'?'USB / Removable Device':'SSD / Windows Boot Manager'),'Pilih Flashdisk (USB) di sidebar','F10: Save and Exit'],confirm:['Save configuration and exit?','First Boot: '+(firstBoot==='usb'?'USB / Removable Device':'SSD / Windows Boot Manager'),'[Yes]        [No]'],noos:['First Boot: SSD','Nyalakan ulang PC dan ubah First Boot ke USB.']};
+        (rows[bootStage]||[]).forEach((text,index)=>ctx.fillText(text,64,190+index*65));
+        windowsScreen.material.map.needsUpdate=true;return;
+      }
+      ctx.fillStyle='#24b9ff';for(const [x,y] of [[472,90],[516,90],[472,134],[516,134]])ctx.fillRect(x,y,36,36);
+      ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='36px Arial';ctx.fillText('Windows',512,242);
+      ctx.font='23px Arial';
+      const text=bootStage==='windows-logo'?'Memulai Windows':'Memuat Windows dari USB... '+windowsProgress+'%';
+      ctx.fillText(text,512,310);
+      ctx.font='18px Arial';ctx.fillStyle='#bedcff';ctx.fillText('Simulasi pembelajaran',512,366);
+      if(bootStage==='windows-logo'){
+        ctx.fillStyle='#fff';for(let i=0;i<6;i++){const angle=i*Math.PI/3+(reducedMotion?0:now/500);ctx.beginPath();ctx.arc(512+20*Math.cos(angle),425+20*Math.sin(angle),3,0,Math.PI*2);ctx.fill()}
+      }else if(windowsProgress!==null){ctx.fillStyle='#25456c';ctx.fillRect(262,410,500,8);ctx.fillStyle='#24b9ff';ctx.fillRect(262,410,500*windowsProgress/100,8)}
+      windowsScreen.material.map.needsUpdate=true;
+    }
+    function focusMonitor(){
+      const display=monitor.getObjectByName('Cube001_Material004_0');
+      const bounds=new THREE.Box3().setFromObject(display),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+      const distance=Math.max(size.y,size.x/camera.aspect)/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*1.18;
+      controls.enabled=false;controls.target.copy(center);camera.position.set(center.x,center.y,bounds.max.z+distance);camera.lookAt(center);controls.update();monitorView=true;
+    }
+    function powerPC(){
+      if(step!==parts().length||!flashInserted||!['off','noos','shutdown'].includes(bootStage))return;
+      if(bootStage==='shutdown'){bootStage='windows-logo';windowsProgress=100;startupAt=performance.now();focusMonitor();update();drawWindowsScreen();return}
+      bootStage='post';bootSaved=false;focusMonitor();guide(null);drawWindowsScreen();update();
+      hint('Tekan F2, DEL, atau ESC berulang sekarang untuk masuk BIOS.');
+      clearTimeout(bootTimer);bootTimer=setTimeout(()=>{
+        if(bootStage!=='post')return;bootStage='noos';drawWindowsScreen();update();hint('BIOS terlewat. Klik Nyalakan PC dan coba lagi.');
+      },7000);
+    }
+    function handleBiosKey(key){
+      if(step!==parts().length)return false;
+      if(bootStage==='post'&&['F2','Delete','Escape'].includes(key)){
+        clearTimeout(bootTimer);bootStage='bios';drawWindowsScreen();update();hint('BIOS terbuka. Pilih menu Boot / Boot Priority.');return true;
+      }
+      if(['bios','boot'].includes(bootStage)&&key==='F10'){
+        bootStage='confirm';drawWindowsScreen();update();hint('Konfirmasi Save and Exit dengan memilih Yes.');return true;
+      }
+      return false;
+    }
+    function openBootMenu(){
+      if(bootStage!=='bios')return;bootStage='boot';drawWindowsScreen();update();
+    }
+    function confirmBiosSave(yes){
+      if(bootStage!=='confirm')return;
+      if(!yes){bootStage='boot';drawWindowsScreen();update();return}
+      bootSaved=true;
+      if(firstBoot==='usb')installWindows();
+      else{bootStage='noos';drawWindowsScreen();update();hint('First Boot masih SSD. Nyalakan ulang dan pilih USB di BIOS.');}
+    }
+    function installWindows(){
+      if(step!==parts().length||!flashInserted||windowsProgress!==null||bootStage!=='confirm'||!bootSaved||firstBoot!=='usb')return;
+      bootStage='windows';windowsProgress=0;focusMonitor();guide(null);drawWindowsScreen();update();hint('Pengaturan BIOS tersimpan. Memuat Windows dari flashdisk...');
+      windowsTimer=setInterval(()=>{
+        windowsProgress=Math.min(100,windowsProgress+10);drawWindowsScreen();update();
+        if(windowsProgress===100){clearInterval(windowsTimer);bootStage='windows-logo';startupAt=performance.now();$('#current').textContent='Memulai Windows';hint('Windows sedang dimulai...');drawWindowsScreen();}
+      },600);
+    }
+    async function start(){
+      if(loading||running)return;
+      running=true;step=0;document.querySelectorAll('input[name=build]').forEach(input=>input.disabled=true);
+      $('#start').hidden=true;$('#reset').hidden=false;$('#components').hidden=false;$('#progress').hidden=false;$('#welcome').hidden=true;$('#hint').hidden=false;
+      setBuild();hint('Memuat case...');
+      try{
+        const root=await loadModel(presets[selected].case);pc.add(root);caseBounds=new THREE.Box3().setFromObject(root);caseHeight=caseBounds.getSize(new THREE.Vector3()).y;
+        hint('Memuat meja komputer...');
+        const desk=await loadModel({path:'meja_komputer',position:[0,0,0],scale:1,rotation:[-Math.PI/2,0,0]});
+        placeDesk(desk);deskBounds=new THREE.Box3().setFromObject(desk);
+        frameAssembly();guide(null);hint('Case siap. Klik Lanjutkan untuk motherboard.');update();
+      }catch{
+        layer.clear();pc.clear();pc.position.set(0,0,0);layer.add(pc);running=false;$('#start').hidden=false;$('#next').hidden=true;document.querySelectorAll('input[name=build]').forEach(input=>input.disabled=false);
+      }
+    }
+    async function spawnPart(){
+      if(!running||loading||activePart||step>=parts().length)return;
+      clearTimeout(guideTimer);guide(null);
+      const spec=parts()[step];hint('Memuat '+labels[spec.key]+'...');
+      try{
+        activePart=await loadModel(spec);
+        if(spec.key==='monitor')createWindowsScreen(activePart);
+        if(spec.usb)placeFlashdrive(activePart);else if(spec.desktop)placePeripheral(activePart,spec);else pc.add(activePart);
+        const target=activePart.position.clone();
+        ghost=activePart.clone(true);
+        const green=new THREE.MeshBasicMaterial({color:0x50ff86,transparent:true,opacity:.35,depthWrite:false});
+        ghost.traverse(obj=>{if(obj.isMesh){obj.material=green;obj.renderOrder=2}});
+        scene.add(ghost);ghost.updateMatrixWorld(true);
+        const size=new THREE.Box3().setFromObject(activePart).getSize(new THREE.Vector3());
+        const start=target.clone();start.x-=caseHeight*.8;
+        activePart.position.copy(start);
+        activePart.userData={target,start,tolerance:Math.max(caseHeight*.015,Math.min(size.x,size.y)*.22)};
+        frameAssembly();controls.enabled=true;canvas.style.cursor='grab';guide(spec);update();
+        hint('Tarik '+labels[spec.key]+' ke siluet hijau pada dudukannya.');
+      }catch(error){
+        console.error('Gagal menyiapkan '+spec.path,error);
+        if(activePart)activePart.removeFromParent();removeGhost();activePart=null;
+        hint('Gagal menyiapkan '+labels[spec.key]+'. Klik Lanjutkan untuk mencoba lagi.');update();
+      }
+    }
+    function pointerPosition(event){
+      const r=canvas.getBoundingClientRect();pointer.x=((event.clientX-r.left)/r.width)*2-1;pointer.y=-((event.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);
+    }
+    canvas.addEventListener('pointerdown',event=>{
+      if(!activePart||event.button!==0||!event.isPrimary)return;pointerPosition(event);
+      if(!raycaster.intersectObject(activePart,true).length)return;
+      const normal=parts()[step].desktop?new THREE.Vector3(0,1,0):camera.getWorldDirection(new THREE.Vector3());
+      dragPlane.setFromNormalAndCoplanarPoint(normal,activePart.userData.target);
+      if(!raycaster.ray.intersectPlane(dragPlane,dragPoint))return;
+      grabOffset.copy(activePart.position).sub(dragPoint);
+      grabOffset.addScaledVector(normal,-grabOffset.dot(normal));
+      event.stopImmediatePropagation();controls.enabled=false;
+      dragging=true;canvas.setPointerCapture(event.pointerId);canvas.style.cursor='grabbing';
+    },{capture:true});
+    canvas.addEventListener('pointermove',event=>{
+      if(!dragging||!activePart)return;pointerPosition(event);
+      if(raycaster.ray.intersectPlane(dragPlane,dragPoint))activePart.position.copy(dragPoint).add(grabOffset);
+    });
+    canvas.addEventListener('pointerup',event=>{
+      if(!dragging||!activePart)return;dragging=false;controls.enabled=true;
+      if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);
+      const {target,start,tolerance}=activePart.userData;
+      if(activePart.position.distanceTo(target)<=tolerance){
+        const installed=parts()[step];
+        activePart.position.copy(target);
+        if(installed.desktop)desktopDevices[installed.key]=activePart;
+        if(installed.key==='monitor')monitor=activePart;
+        if(installed.key==='keyboard')showConnections();
+        if(installed.key==='flashdrive')flashInserted=true;
+        activePart=null;removeGhost();step++;controls.enabled=true;canvas.style.cursor='default';guide(null);update();
+        if(step===presets[selected].parts.length){
+          movePCBesideDesk();
+          guideMessage('PC selesai dirakit!','PC sudah dipindahkan ke samping meja. Klik Lanjutkan untuk menempatkan monitor, mouse, lalu keyboard di atas meja.');
+        }else if(step===parts().length-1){
+          guideMessage('Colokkan flashdrive terlebih dahulu','Klik Lanjutkan, lalu tarik flashdrive ke port USB di atas PC. PC baru dapat dinyalakan setelah flashdrive terpasang.');
+        }else if(step===parts().length){
+          guide(null);focusMonitor();
+        }else{
+          guideMessage('Yeay, berhasil terpasang! 🎉',labels[installed.key]+' sudah terpasang dengan benar. Klik Lanjutkan untuk komponen berikutnya.');
+          guideTimer=setTimeout(()=>guide(null),3500);
+        }
+        hint(step===parts().length?'Flashdrive terpasang. Nyalakan PC lalu masuk ke BIOS.':step===presets[selected].parts.length?'Klik Lanjutkan, lalu tarik monitor ke atas meja.':step===parts().length-1?'Klik Lanjutkan untuk mencolokkan flashdrive ke port USB PC.':'Terpasang. Klik Lanjutkan untuk komponen berikutnya.');
+      }else{activePart.position.copy(start);canvas.style.cursor='grab';hint('Belum sejajar. Cocokkan komponen dengan siluet hijau.')}
+    });
+    canvas.addEventListener('pointercancel',event=>{
+      if(!dragging)return;dragging=false;controls.enabled=true;if(canvas.hasPointerCapture(event.pointerId))canvas.releasePointerCapture(event.pointerId);
+      activePart.position.copy(activePart.userData.start);canvas.style.cursor='grab';
+    });
+    $('#desktopStart').onclick=toggleStart;$('#startSearch').oninput=event=>filterStartApps(event.target.value);
+    document.querySelectorAll('[data-start-app]').forEach(button=>button.onclick=()=>openDesktopApp(button.dataset.startApp));
+    $('#startPower').onclick=()=>{$('#powerMenu').hidden=!$('#powerMenu').hidden;$('#startPower').setAttribute('aria-expanded',String(!$('#powerMenu').hidden))};
+    document.querySelectorAll('[data-power]').forEach(button=>button.onclick=()=>desktopPower(button.dataset.power));
+    document.addEventListener('pointerdown',event=>{if(startOpen&&!$('#startMenu').contains(event.target)&&event.target!==canvas&&event.target!==$('#desktopStart'))closeStart()});
+    addEventListener('keydown',event=>{if(bootStage==='desktop'&&event.ctrlKey&&event.key==='Escape'){event.preventDefault();toggleStart()}else if(startOpen&&event.key==='Escape'){closeStart();$('#desktopStart').focus()}});
+    addEventListener('blur',()=>{if(startOpen)closeStart()});
+    document.querySelectorAll('[data-app]').forEach(button=>button.onclick=()=>openDesktopApp(button.dataset.app));
+    addEventListener('message',event=>{
+      if(event.origin!==location.origin)return;
+      if(event.source===$('#calculatorApp').contentWindow){
+        if(event.data?.type==='calculator-close')openDesktopApp(null);
+        if(event.data?.type==='calculator-result'&&typeof event.data.text==='string'){calculatorResult=event.data.text;if(windowsScreen&&bootStage==='desktop')drawWindowsScreen()}
+        return;
+      }
+      if(event.source!==$('#wordApp').contentWindow)return;
+      if(event.data?.type==='word-close')openDesktopApp(null);
+      if(event.data?.type==='word-document'&&typeof event.data.text==='string'){appText.word=event.data.text;if(windowsScreen&&bootStage==='desktop')drawWindowsScreen()}
+    });
+    $('#closeApp').onclick=()=>openDesktopApp(null);
+    $('#desktopText').oninput=event=>{if(activeApp==='word'||activeApp==='note'){appText[activeApp]=event.target.value;drawWindowsScreen()}};
+    canvas.addEventListener('click',event=>{
+      if(bootStage!=='desktop')return;pointerPosition(event);
+      const hit=raycaster.intersectObject(windowsScreen,false)[0];if(!hit||!hit.uv)return;
+      const x=hit.uv.x*1024,y=(1-hit.uv.y)*576;
+      if(y>=528&&x>=0&&x<=108){toggleStart();return}
+      if(startOpen)closeStart();
+      if(activeApp&&x>=886&&x<=944&&y>=60&&y<=106)openDesktopApp(null);
+      else if(y>=528&&x>=130&&x<=365)openDesktopApp(x<200?'word':x<266?'note':'calculator');
+      else if(x>=24&&x<=120&&y>=24&&y<408)openDesktopApp(['word','note','calculator'][Math.floor((y-24)/128)]);
+    });
+    $('#start').onclick=start;$('#next').onclick=spawnPart;$('#install').onclick=powerPC;
+    $('#bootMenu').onclick=openBootMenu;$('#saveBios').onclick=()=>handleBiosKey('F10');
+    $('#saveYes').onclick=()=>confirmBiosSave(true);$('#saveNo').onclick=()=>confirmBiosSave(false);
+    $('#firstBoot').onchange=event=>{if(bootStage!=='boot')return;firstBoot=event.target.value==='usb'?'usb':'ssd';drawWindowsScreen();update()};
+    document.querySelectorAll('[data-bios-key]').forEach(button=>button.onclick=()=>handleBiosKey(button.dataset.biosKey));
+    addEventListener('keydown',event=>{if(handleBiosKey(event.key))event.preventDefault()});
+    $('#inspect').onclick=()=>{
+      if(startOpen)closeStart();
+      inspecting=!inspecting;monitorView=false;
+      if(inspecting){
+        const bounds=new THREE.Box3().setFromObject(layer),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+        controls.enabled=true;controls.target.copy(center);
+        controls.minDistance=caseHeight*.45;controls.maxDistance=Math.max(size.x,size.y,size.z)*4;
+        camera.position.set(center.x+size.x*.55,center.y+caseHeight*.25,bounds.max.z+Math.max(size.x/camera.aspect,size.y)*1.4);
+        controls.update();$('#inspect').textContent='Kembali ke monitor';hint('Mode inspeksi: drag untuk memutar model, scroll untuk zoom.');
+      }else{
+        controls.minDistance=0;controls.maxDistance=Infinity;focusMonitor();
+        $('#inspect').textContent='Inspeksi model';hint(bootStage==='desktop'?'Desktop siap.':'Ikuti petunjuk BIOS pada sidebar.');
+      }
+    };
+    $('#reset').onclick=()=>location.reload();$('#help').onclick=()=>$('#helpbox').hidden=!$('#helpbox').hidden;
+    setBuild();update();
+    let lastFrame=0;function animate(now=0){
+      requestAnimationFrame(animate);if(now-lastFrame<33||document.hidden||!renderReady||gl.isContextLost())return;
+      lastFrame=now;advanceStartup(now);controls.update();positionApp();
+      connections.forEach(({curve,pulse,flowTexture},index)=>{
+        flowTexture.offset.x=reducedMotion?0:-now/1800;
+        pulse.position.copy(curve.getPointAt(reducedMotion?.5:(now/2400+index/3)%1));
+      });
+      renderer.render(scene,camera);
+    }animate();
+  </script>
+</body>
+</html>

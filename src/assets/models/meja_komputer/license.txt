@@ -1,0 +1,11 @@
+Model Information:
+* title:	Meja Komputer
+* source:	https://sketchfab.com/3d-models/meja-komputer-1837f10d9b064fd88a607a3d391a17af
+* author:	Sutikno (https://sketchfab.com/sutikno)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Meja Komputer" (https://sketchfab.com/3d-models/meja-komputer-1837f10d9b064fd88a607a3d391a17af) by Sutikno (https://sketchfab.com/sutikno) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,11 @@
+Model Information:
+* title:	USB FlashDrive
+* source:	https://sketchfab.com/3d-models/usb-flashdrive-0e6df3d1f2c44bf3a68b728bcf0157e8
+* author:	Hardy Noer (https://sketchfab.com/hardiegnome)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "USB FlashDrive" (https://sketchfab.com/3d-models/usb-flashdrive-0e6df3d1f2c44bf3a68b728bcf0157e8) by Hardy Noer (https://sketchfab.com/hardiegnome) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
